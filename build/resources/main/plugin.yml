@@ -1,0 +1,8 @@
+name: RevolutionBosses
+description: plugin de bosses.
+author: zKingOfKill
+version: '1.0'
+main: me.zkingofkill.revolutionbosses.Main
+
+commands:
+  bosses:

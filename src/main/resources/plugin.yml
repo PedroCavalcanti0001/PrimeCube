@@ -1,0 +1,12 @@
+name: PrimeCubes
+description: mine/cyborgs plugin.
+author: zKingOfKill
+depend:
+  - Vault
+softdepend:
+  - KoTH
+version: '1.12.2'
+main: me.zkingofkill.primecubes.Main
+
+commands:
+  d:

@@ -1,0 +1,22 @@
+"0":
+  name: "&aA small cube'"
+  size: "3-3-3"
+  item: "1"
+  lore:
+    - " "
+    - "&eSize: &e{size}"
+    - "&e"
+    - "&e&l{UpgradeName} &8(&7{upgradeLevel}&8)"
+  upgrades:
+    - "0"
+    - "1"
+  blocks:
+    0:
+      item: "22"
+      chance: 50
+    1:
+      item: "57"
+      chance: 25
+    2:
+      item: "133"
+      chance: 25
