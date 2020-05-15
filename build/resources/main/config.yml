@@ -1,0 +1,63 @@
+mysql:
+  password: ''
+  host: 'localhost'
+  database: 'test'
+  port: 3306
+  user: 'root'
+  table: 'primecube_users'
+
+
+guis:
+  cube:
+    title: "PrimeCube {size}"
+    items:
+      upgrades:
+        item: "19783"
+        name: "&2&lUpgrades"
+        lore:
+          - ""
+          - "&aClick to open upgrades!"
+        position:
+          row: 5
+          collunm: 3
+      sellAll:
+        item: "Diamond"
+        name: "&2&lSELL ALL"
+        lore:
+          - ""
+          - "&aPrice: &f{price}"
+        position:
+          row: 5
+          collunm: 5
+      remove:
+        item: "barrier"
+        name: "&4&lRemove"
+        lore:
+          - ""
+          - "&cremove cube"
+        position:
+          row: 5
+          collunm: 8
+      nextPage:
+        item: "arrow"
+        name: "&aNext Page"
+        lore:
+          - ""
+          - "&2--->"
+        position:
+          row: 2
+          collunm: 7
+      previousPage:
+        item: "arrow"
+        name: "&cPrevious Page"
+        lore:
+          - ""
+          - "&2<---"
+        position:
+          row: 2
+          collunm: 1
+      glassPane:
+        item: "stained_glass_pane:15"
+        name: ""
+        lore: []
+

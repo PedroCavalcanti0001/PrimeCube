@@ -1,0 +1,171 @@
+"SPEED":
+  name: "&aSpeed Upgrade"
+  item: "1"
+  lore:
+    - ""
+    - "&aspeed upgrade"
+  position:
+    row: 0
+    collunm: 0
+  levels:
+    "1":
+      #Every broken ore will be generated again after @time seconds
+      time: 30
+      #Value to upgrade
+      price: 0
+      position:
+        row: 0
+        collunm: 1
+      "2":
+        #Every broken ore will be generated again after @time seconds
+        time: 25
+        #Value to upgrade
+        price: 1000
+        position:
+          row: 0
+          collunm: 2
+"STORAGE":
+  name: "&aStorage Upgrade"
+  item: "1"
+  lore:
+    - ""
+    - "&aas"
+  position:
+    row: 0
+    collunm: 1
+  levels:
+    "1":
+      totalAmountPerDrop: 1
+      #Value to upgrade
+      price: 0
+      position:
+        row: 0
+        collunm: 1
+      "2":
+        pages: 2
+        price: 1000
+        position:
+          row: 0
+          collunm: 2
+"CYBORGSPEED":
+  name: "&aCyborg Upgrade"
+  item: "1"
+  lore:
+    - ""
+    - "&a"
+  position:
+    row: 0
+    collunm: 2
+  levels:
+    "1":
+      blocksPerSecond: 0.3
+      price: 0
+      position:
+        row: 0
+        collunm: 1
+      "2":
+        blocksPerSecond: 0.9
+        price: 1000
+        position:
+          row: 0
+          collunm: 2
+"CYBORGFORTUNE":
+  name: "&aCyborg Fortune"
+  item: "1"
+  lore:
+    - ""
+    - "&aCyborg Fortune"
+  position:
+    row: 0
+    collunm: 3
+  levels:
+    "1":
+      #Every broken ore will be generated again after @time seconds
+      fortune: 1
+      #Value to upgrade
+      price: 0
+      position:
+        row: 0
+        collunm: 1
+      "2":
+        fortune: 2
+        price: 1000
+        position:
+          row: 0
+          collunm: 2
+"LAYERS":
+  name: "&aLayers Upgrade"
+  item: "1"
+  lore:
+    - "&aLayers"
+  position:
+    row: 0
+    collunm: 4
+  levels:
+    "1":
+      #Value to upgrade
+      price: 0
+      sections: 2
+      position:
+        row: 0
+        collunm: 1
+      "2":
+        sections: 3
+        #Value to upgrade
+        price: 1000
+        position:
+          row: 0
+          collunm: 2
+    "3":
+      #Value to upgrade
+      price: 0
+      sections: 4
+      position:
+        row: 0
+        collunm: 3
+      "4":
+        sections: 5
+        #Value to upgrade
+        price: 1000
+        position:
+          row: 0
+          collunm: 4
+    "5":
+      #Value to upgrade
+      price: 0
+      sections: 6
+      position:
+        row: 0
+        collunm: 5
+      "6":
+        sections: 7
+        #Value to upgrade
+        price: 1000
+        position:
+          row: 0
+          collunm: 6
+"LOOT":
+  name: "&aLoot Upgrade"
+  item: "1"
+  lore:
+    - ""
+    - ""
+  position:
+    row: 0
+    collunm: 5
+  levels:
+    "1":
+      #aumento no valor do bloco com esse upgrade
+      increasePercentage: 2
+      #Value to upgrade
+      price: 0
+      position:
+        row: 0
+        collunm: 1
+      "2":
+        time: 25
+        increasePercentage: 2.5
+        price: 1000
+        position:
+          row: 0
+          collunm: 2

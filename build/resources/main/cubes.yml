@@ -1,0 +1,68 @@
+'1':
+  name: '&aA small cube'
+  size: 3-3
+  item: '7129'
+  activatedCyborg: false
+  defaultSections: 1
+  defaultStorage: 124
+  defaultSpeed: 30
+  lore:
+    - ' '
+    - '&eSize: &e{size}'
+    - '&e'
+    - '&6&lUpgrades:'
+    - '&e&l{UpgradeName} &8(&7{upgradeLevel}&8)'
+    - ''
+    - '&7&oPut it on the ground to start generating ores!'
+  upgrades:
+    - SPEED
+  blocks:
+    '0':
+      item: 'STONE'
+      chance: 100
+      unitPrice: 5.0
+    '1':
+      item: 'DIAMOND_BLOCK'
+      chance: 50
+      unitPrice: 15.0
+    '2':
+      item: 'Emerald_Block'
+      chance: 50
+      unitPrice: 25.0
+'2':
+  name: '&aA mid cube'
+  size: 7-7
+  item: '7129'
+  activatedCyborg: true
+  defaultSections: 1
+  defaultStorage: 124
+  defaultSpeed: 30
+  lore:
+    - ' '
+    - '&eSize: &e{size}'
+    - '&e'
+    - '&6&lUpgrades:'
+    - '&e&l{UpgradeName} &8(&7{upgradeLevel}&8)'
+    - ''
+    - '&7&oPut it on the ground to start generating ores!'
+  upgrades:
+    - CYBORGFORTUNE
+    - LAYERS
+    - SPEED
+    - LOOT
+    - CYBORGSPEED
+    - STORAGE
+  blocks:
+    '0':
+      item: 'STONE'
+      chance: 100
+      unitPrice: 5.0
+    '1':
+      item: 'DIAMOND_BLOCK'
+      chance: 50
+      unitPrice: 15.0
+    '2':
+      item: 'Emerald_Block'
+      chance: 50
+      unitPrice: 25.0
+
