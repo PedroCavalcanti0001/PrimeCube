@@ -2,4 +2,9 @@ package me.zkingofkill.primecubes.cube
 /*
     Tamanho de uma mina
  */
-class CubeSize(var x:Int, y:Int, var z:Int)
+data class CubeSize(var xz:Double, var y:Double){
+
+    override fun toString(): String {
+        return "${xz.toInt()}x${y.toInt()}"
+    }
+}

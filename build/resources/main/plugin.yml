@@ -1,8 +1,13 @@
-name: RevolutionBosses
-description: plugin de bosses.
+name: PrimeCubes
+description: mine/cyborgs plugin.
 author: zKingOfKill
-version: '1.0'
-main: me.zkingofkill.revolutionbosses.Main
+depend:
+  - Vault
+  - HeadDatabase
+softdepend:
+  - KoTH
+version: '1.12.2'
+main: me.zkingofkill.primecubes.Main
 
 commands:
-  bosses:
+  cube:

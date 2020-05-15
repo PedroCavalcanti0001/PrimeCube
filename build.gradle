@@ -12,13 +12,23 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven {
-        url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
+    flatDir {
+        dirs 'libs'
     }
 }
-
 dependencies {
-    compile 'fr.minuskube.inv:smart-invs:1.2.7'
-    compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
+    compileOnly fileTree(dir: '/../../libs/plugins', include: ['*.jar'])
+    compileOnly fileTree(dir: '/../../libs/spigot/1122', include: ['*.jar'])
+    compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }

@@ -1,18 +1,51 @@
 package me.zkingofkill.primecubes.cube
 
-import ItemStackBuilder
 import me.zkingofkill.primecubes.Main
-import me.zkingofkill.primecubes.cube.upgrades.IUpgrade
+import me.zkingofkill.primecubes.cube.upgrade.IUpgrade
+import me.zkingofkill.primecubes.exception.CubePropsNotFoundException
+import me.zkingofkill.primecubes.exception.UpgradeNotFoundException
+import me.zkingofkill.primecubes.utils.tag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import utils.ItemStackBuilder
 
-class CubeProps(
-        var id: Int,
+data class CubeProps(
+        var typeId: Int,
         var cubeSize: CubeSize,
-        var itemStack: ItemStack,
+        internal var itemStack: ItemStack,
         var blocks: ArrayList<CubeBlock>,
         var maxLife: Double,
-        var upgrades: ArrayList<IUpgrade<Any>>) {
+        var upgrades: ArrayList<UpgradeType>,
+        var defaultSections: Int,
+        var defaultStorage: Int,
+        var defaultSpeed: Int,
+        var activatedCyborg: Boolean) {
+
+
+    fun itemStack(): ItemStack {
+        var itemStack = itemStack.clone()
+        val lore = if (itemStack.hasItemMeta() && itemStack.itemMeta.hasLore()) itemStack.itemMeta.lore else arrayListOf()
+
+
+        val line = lore.find { it.contains("{upgradeLevel}") || it.contains("{UpgradeName}") }
+        if (line != null) {
+            var index = lore.indexOf(line)
+            lore.remove(line)
+            upgrades.forEach {
+                val upgrade = IUpgrade.byType(it) ?: throw UpgradeNotFoundException(it)
+                itemStack = itemStack.tag("{primecubes_level_$it}", 0.toString())
+                lore.add(index, line.replace("{UpgradeName}", upgrade.name)
+                        .replace("{upgradeLevel}", "0")
+                        .replace("&", "§"))
+                index++
+            }
+        }
+        val itemStackBuilder = ItemStackBuilder(itemStack)
+        itemStackBuilder.setLore(lore)
+
+        return itemStackBuilder.build().tag("{primecubes_typeId}", typeId.toString())
+    }
+
 
     companion object {
         fun list(): ArrayList<CubeProps> {
@@ -21,36 +54,67 @@ class CubeProps(
             val list = arrayListOf<CubeProps>()
             for (id in cubesFile.getConfigurationSection("").getKeys(false)) {
                 val name = cubesFile.getString("$id.name").replace("&", "§")
-                val x = cubesFile.getString("$id.size").split("-")[0].toInt()
-                val y = cubesFile.getString("$id.size").split("-")[1].toInt()
-                val z = cubesFile.getString("$id.size").split("-")[2].toInt()
-                val cubeSize = CubeSize(x, y, z)
+                val activatedCyborg = cubesFile.getBoolean("$id.activatedCyborg")
+                val xz = cubesFile.getString("$id.size").split("-")[0].toDouble()
+                val y = cubesFile.getString("$id.size").split("-")[1].toDouble()
+                val cubeSize = CubeSize(xz, y)
                 val maxLife = cubesFile.getDouble("$id.maxLife")
-                val item = cubesFile.getString("$id.item")
-                val lore = cubesFile.getStringList("$id.item")
+                val defaultSections = cubesFile.getInt("$id.defaultSections")
+                val defaultStorage = cubesFile.getInt("$id.defaultStorage")
+                val defaultSpeed = cubesFile.getInt("$id.defaultSpeed")
+                val item = cubesFile.getString("$id.item").toUpperCase()
+                val lore = cubesFile.getStringList("$id.lore")
                         .map { it.replace("&", "§") }
+                        .map { it.replace("{size}", "${xz.toInt()}-${y.toInt()}") }
                 val args = item.split(":")
-                val itemId = if (args.size == 2) args[0].toInt() else item.toInt()
+                val itemId = if (args.size == 2) args[0] else item
                 val itemDate = if (args.size == 2) args[1].toInt() else 0
-                val itemStack = ItemStackBuilder(Material.getMaterial(itemId))
-                        .setName(name)
-                        .setLore(lore)
-                        .setDurability(itemDate).build()
+                val itemStack = if (Material.getMaterial(itemId) != null) {
+                    ItemStackBuilder(Material.getMaterial(itemId))
+                            .setName(name)
+                            .setLore(lore)
+                            .setDurability(itemDate).build()
+                } else {
+                    ItemStackBuilder(Main.singleton.headDatabaseAPI.getItemHead(itemId))
+                            .setName(name)
+                            .setLore(lore).build()
+                }
                 val blocks = arrayListOf<CubeBlock>()
-                for (sec in cubesFile.getConfigurationSection("").getKeys(false)) {
+                val upgrades = cubesFile.getStringList("$id.upgrades").map { UpgradeType.valueOf(it.toUpperCase()) }
+                        as ArrayList<UpgradeType>
+                for (sec in cubesFile.getConfigurationSection("$id.blocks").getKeys(false)) {
                     val blockItem = cubesFile.getString("$id.blocks.$sec.item")
                     val blockChance = cubesFile.getDouble("$id.blocks.$sec.chance")
+                    val unitPrice = cubesFile.getDouble("$id.blocks.$sec.unitPrice")
                     val itemArgs = blockItem.split(":")
-                    val blockItemId = if (itemArgs.size == 2) itemArgs[0].toInt() else blockItem.toInt()
+                    val blockItemId = if (itemArgs.size == 2) itemArgs[0] else blockItem
                     val blockItemDate = if (itemArgs.size == 2) itemArgs[1].toInt() else 0
-                    val blockItemStack = ItemStackBuilder(Material.getMaterial(blockItemId))
-                            .setName(blockItem)
+                    val blockItemStack = ItemStackBuilder(Material.getMaterial(blockItemId.toUpperCase()))
                             .setDurability(blockItemDate).build()
-                    val cubeBlock = CubeBlock(sec.toInt(), blockItemStack, blockChance)
+                    val cubeBlock = CubeBlock(sec.toInt(), blockItemStack, blockChance, unitPrice)
                     blocks.add(cubeBlock)
                 }
+                val cube = CubeProps(typeId = id.toInt(),
+                        cubeSize = cubeSize,
+                        blocks = blocks,
+                        itemStack = itemStack,
+                        maxLife = maxLife,
+                        upgrades = upgrades,
+                        defaultSections = defaultSections,
+                        defaultStorage = defaultStorage,
+                        activatedCyborg = activatedCyborg,
+                        defaultSpeed = defaultSpeed)
             }
             return list
+        }
+
+        fun byTypeId(typeId: Int, nonNull: Boolean = false): CubeProps? {
+            val find = list().find {
+                it.typeId == typeId
+            }
+            return if (nonNull && find == null) {
+                throw CubePropsNotFoundException(typeId)
+            } else find
         }
     }
 }

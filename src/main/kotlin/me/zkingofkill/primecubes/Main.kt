@@ -1,9 +1,14 @@
 package me.zkingofkill.primecubes
 
-import ConfigurationFile
 import fr.minuskube.inv.InventoryManager
-import org.bukkit.material.Command
+import me.arcaniax.hdb.api.HeadDatabaseAPI
+import me.zkingofkill.primecubes.command.CubeCommand
+import me.zkingofkill.primecubes.listener.CubeListeners
+import me.zkingofkill.primecubes.manager.CubeManager
+import net.milkbowl.vault.economy.Economy
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import utils.ConfigurationFile
 
 
 class Main : JavaPlugin() {
@@ -12,12 +17,13 @@ class Main : JavaPlugin() {
         lateinit var singleton: Main
     }
 
+    lateinit var economy: Economy
     lateinit var inventoryManager: InventoryManager
-
     //lateinit var mysql: Mysql
     lateinit var upgradesFile: ConfigurationFile
     lateinit var messagesFile: ConfigurationFile
     lateinit var cubesFile: ConfigurationFile
+    lateinit var headDatabaseAPI: HeadDatabaseAPI
 
 
     override fun onEnable() {
@@ -26,6 +32,7 @@ class Main : JavaPlugin() {
 
         inventoryManager = InventoryManager(this)
         inventoryManager.init()
+        headDatabaseAPI = HeadDatabaseAPI()
 
         /* mysql = Mysql()
          mysql.init()
@@ -33,7 +40,15 @@ class Main : JavaPlugin() {
          User.delayedSaveAll()
 
          */
+        if (Bukkit.getServer().pluginManager.getPlugin("Vault") != null) {
+            val rsp =
+                    Bukkit.getServer().servicesManager.getRegistration(Economy::class.java)
+            economy = rsp.provider
+        }
+        CubeManager.init()
 
+        getCommand("cube").executor = CubeCommand()
+        server.pluginManager.registerEvents(CubeListeners(), this)
     }
 
     override fun onDisable() {
