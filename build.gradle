@@ -18,19 +18,19 @@ repositories {
             includeGroup 'org.spigotmc'
         }
     }
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.codemc.org/repository/maven-public/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
 
-    flatDir {
-        dirs 'libs'
-    }
 }
 dependencies {
+
     compileOnly fileTree(dir: '/../../libs/plugins', include: ['*.jar'])
     compileOnly fileTree(dir: '/../../libs/spigot/1122', include: ['*.jar'])
-    compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "de.tr7zw:item-nbt-api-plugin:2.3.1"
 }
 
 compileKotlin {

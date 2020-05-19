@@ -23,7 +23,7 @@ interface IUpgrade<ImplLevel> {
     var name: String
     var slotPos: SlotPos
     var itemStack: ItemStack
-    var currentLevel: Int
+    fun nextLevel(currentLevel: Int): IUpgradeLevel?
     var levels: ArrayList<ImplLevel>
     var levelMax: Int
     var upgradeType: UpgradeType
@@ -50,12 +50,9 @@ interface IUpgrade<ImplLevel> {
                     UpgradeType.SPEED -> {
                         val levels = arrayListOf<SpeedLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
-                            val levelRow = upgradesFile.getInt("$sec.levels.$levelSec.position.row")
-                            val levelCollunm = upgradesFile.getInt("$sec.levels.$levelSec.position.collunm")
-                            val levelSlotPos = SlotPos(levelRow, levelCollunm)
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")
                             val time = upgradesFile.getInt("$sec.levels.$levelSec.time")
-                            val level = SpeedLevel(levelSec.toInt(), price, levelSlotPos, time)
+                            val level = SpeedLevel(levelSec.toInt(), price, time)
                             levels.add(level)
                         }
                         val upgrade = SpeedUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>
@@ -64,12 +61,9 @@ interface IUpgrade<ImplLevel> {
                     UpgradeType.STORAGE -> {
                         val levels = arrayListOf<StorageLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
-                            val levelRow = upgradesFile.getInt("$sec.levels.$levelSec.position.row")
-                            val levelCollunm = upgradesFile.getInt("$sec.levels.$levelSec.position.collunm")
-                            val levelSlotPos = SlotPos(levelRow, levelCollunm)
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")
                             val totalAmountPerDrop = upgradesFile.getInt("$sec.levels.$levelSec.totalAmountPerDrop")
-                            val level = StorageLevel(levelSec.toInt(), price, levelSlotPos, totalAmountPerDrop)
+                            val level = StorageLevel(levelSec.toInt(), price, totalAmountPerDrop)
                             levels.add(level)
                         }
                         val upgrade = StorageUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>
@@ -78,12 +72,9 @@ interface IUpgrade<ImplLevel> {
                     UpgradeType.CYBORGSPEED -> {
                         val levels = arrayListOf<CyborgSpeedLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
-                            val levelRow = upgradesFile.getInt("$sec.levels.$levelSec.position.row")
-                            val levelCollunm = upgradesFile.getInt("$sec.levels.$levelSec.position.collunm")
-                            val levelSlotPos = SlotPos(levelRow, levelCollunm)
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")
-                            val blocksPerSecounds = upgradesFile.getDouble("$sec.levels.$levelSec.blocksPerSecond")
-                            val level = CyborgSpeedLevel(levelSec.toInt(), price, levelSlotPos, blocksPerSecounds)
+                            val time = upgradesFile.getInt("$sec.levels.$levelSec.time")
+                            val level = CyborgSpeedLevel(levelSec.toInt(), price, time)
                             levels.add(level)
                         }
                         val upgrade = CyborgSpeedUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>
@@ -92,12 +83,10 @@ interface IUpgrade<ImplLevel> {
                     UpgradeType.CYBORGFORTUNE -> {
                         val levels = arrayListOf<CyborgFortuneLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
-                            val levelRow = upgradesFile.getInt("$sec.levels.$levelSec.position.row")
-                            val levelCollunm = upgradesFile.getInt("$sec.levels.$levelSec.position.collunm")
-                            val levelSlotPos = SlotPos(levelRow, levelCollunm)
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")
-                            val blocksPerSecounds = upgradesFile.getInt("$sec.levels.$levelSec.blocksPerSecond")
-                            val level = CyborgFortuneLevel(levelSec.toInt(), price, levelSlotPos, blocksPerSecounds)
+                            val multiply = upgradesFile.getInt("$sec.levels.$levelSec.multiply")
+                            val chance = upgradesFile.getDouble("$sec.levels.$levelSec.chance")
+                            val level = CyborgFortuneLevel(levelSec.toInt(), price,multiply, chance)
                             levels.add(level)
                         }
                         val upgrade = CyborgFortuneUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>
@@ -106,12 +95,9 @@ interface IUpgrade<ImplLevel> {
                     UpgradeType.LAYERS -> {
                         val levels = arrayListOf<LayersLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
-                            val levelRow = upgradesFile.getInt("$sec.levels.$levelSec.position.row")
-                            val levelCollunm = upgradesFile.getInt("$sec.levels.$levelSec.position.collunm")
-                            val levelSlotPos = SlotPos(levelRow, levelCollunm)
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")
                             val sections = upgradesFile.getInt("$sec.levels.$levelSec.sections")
-                            val level = LayersLevel(levelSec.toInt(), price, levelSlotPos, sections)
+                            val level = LayersLevel(levelSec.toInt(), price, sections)
                             levels.add(level)
                         }
                         val upgrade = LayersUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>
@@ -120,12 +106,9 @@ interface IUpgrade<ImplLevel> {
                     UpgradeType.LOOT -> {
                         val levels = arrayListOf<LootLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
-                            val levelRow = upgradesFile.getInt("$sec.levels.$levelSec.position.row")
-                            val levelCollunm = upgradesFile.getInt("$sec.levels.$levelSec.position.collunm")
-                            val levelSlotPos = SlotPos(levelRow, levelCollunm)
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")
                             val increasePercentage = upgradesFile.getInt("$sec.levels.$levelSec.increasePercentage")
-                            val level = LootLevel(levelSec.toInt(), price, levelSlotPos, increasePercentage)
+                            val level = LootLevel(levelSec.toInt(), price, increasePercentage)
                             levels.add(level)
                         }
                         val upgrade = LootUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>

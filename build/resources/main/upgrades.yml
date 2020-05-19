@@ -10,20 +10,21 @@
   levels:
     "1":
       #Every broken ore will be generated again after @time seconds
-      time: 30
+      time: 25
       #Value to upgrade
-      price: 0
-      position:
-        row: 0
-        collunm: 1
-      "2":
-        #Every broken ore will be generated again after @time seconds
-        time: 25
-        #Value to upgrade
-        price: 1000
-        position:
-          row: 0
-          collunm: 2
+      price: 500.0
+    "2":
+      time: 20
+      price: 1000
+    "3":
+      time: 15
+      price: 1000
+    "4":
+      time: 10
+      price: 1000
+    "5":
+      time: 5
+      price: 1000
 "STORAGE":
   name: "&aStorage Upgrade"
   item: "1"
@@ -35,18 +36,12 @@
     collunm: 1
   levels:
     "1":
-      totalAmountPerDrop: 1
+      totalAmountPerDrop: 200
       #Value to upgrade
-      price: 0
-      position:
-        row: 0
-        collunm: 1
+      price: 500
       "2":
-        pages: 2
+        totalAmountPerDrop: 264
         price: 1000
-        position:
-          row: 0
-          collunm: 2
 "CYBORGSPEED":
   name: "&aCyborg Upgrade"
   item: "1"
@@ -58,17 +53,29 @@
     collunm: 2
   levels:
     "1":
-      blocksPerSecond: 0.3
-      price: 0
-      position:
-        row: 0
-        collunm: 1
-      "2":
-        blocksPerSecond: 0.9
-        price: 1000
-        position:
-          row: 0
-          collunm: 2
+      time: 45.0
+      price: 500
+    "2":
+      time: 40.0
+      price: 1000
+    "3":
+      time: 35.0
+      price: 500
+    "4":
+      time: 30.0
+      price: 1000
+    "5":
+      time: 25.0
+      price: 500
+    "6":
+      time: 20.0
+      price: 1000
+    "7":
+      time: 15.0
+      price: 1000
+    "8":
+      time: 10.0
+      price: 1000
 "CYBORGFORTUNE":
   name: "&aCyborg Fortune"
   item: "1"
@@ -80,19 +87,19 @@
     collunm: 3
   levels:
     "1":
-      #Every broken ore will be generated again after @time seconds
-      fortune: 1
+      multiply: 2
+      chance: 15
       #Value to upgrade
-      price: 0
-      position:
-        row: 0
-        collunm: 1
-      "2":
-        fortune: 2
-        price: 1000
-        position:
-          row: 0
-          collunm: 2
+      price: 500
+    "2":
+      multiply: 3
+      chance: 20
+      price: 500
+    "3":
+      multiply: 4
+      chance: 25
+      price: 500
+
 "LAYERS":
   name: "&aLayers Upgrade"
   item: "1"
@@ -104,46 +111,24 @@
   levels:
     "1":
       #Value to upgrade
-      price: 0
+      price: 500
       sections: 2
-      position:
-        row: 0
-        collunm: 1
-      "2":
-        sections: 3
-        #Value to upgrade
-        price: 1000
-        position:
-          row: 0
-          collunm: 2
+    "2":
+      sections: 3
+      #Value to upgrade
+      price: 1000
     "3":
       #Value to upgrade
-      price: 0
+      price: 500
       sections: 4
-      position:
-        row: 0
-        collunm: 3
-      "4":
-        sections: 5
-        #Value to upgrade
-        price: 1000
-        position:
-          row: 0
-          collunm: 4
-    "5":
+    "4":
       #Value to upgrade
-      price: 0
+      price: 500
+      sections: 5
+    "5":
       sections: 6
-      position:
-        row: 0
-        collunm: 5
-      "6":
-        sections: 7
-        #Value to upgrade
-        price: 1000
-        position:
-          row: 0
-          collunm: 6
+      #Value to upgrade
+      price: 1000
 "LOOT":
   name: "&aLoot Upgrade"
   item: "1"
@@ -158,14 +143,8 @@
       #aumento no valor do bloco com esse upgrade
       increasePercentage: 2
       #Value to upgrade
-      price: 0
-      position:
-        row: 0
-        collunm: 1
+      price: 500.0
       "2":
         time: 25
         increasePercentage: 2.5
         price: 1000
-        position:
-          row: 0
-          collunm: 2

@@ -6,6 +6,6 @@ import me.zkingofkill.primecubes.cube.upgrade.IUpgradeLevel
 interface ILootLevel : IUpgradeLevel{
     override var level: Int
     override var price: Double
-    override var slotPos: SlotPos
+
     var increasePercentage: Int
 }

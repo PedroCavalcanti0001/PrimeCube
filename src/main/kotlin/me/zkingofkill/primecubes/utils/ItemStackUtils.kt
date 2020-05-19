@@ -1,24 +1,20 @@
 package me.zkingofkill.primecubes.utils
 
 
-import net.minecraft.server.v1_12_R1.NBTTagCompound
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
-
+import de.tr7zw.changeme.nbtapi.NBTItem
 import org.bukkit.inventory.ItemStack
 
 
-fun ItemStack.tag(key: String, value: String): CraftItemStack {
-    val stack = CraftItemStack.asNMSCopy(this)
-    val tag = if (stack.tag != null) stack.tag else NBTTagCompound()
-    tag!!.setString(key, value)
-    stack.tag = tag
-    return CraftItemStack.asCraftMirror(stack)
+fun ItemStack.tag(key: String, value: String): ItemStack {
+    val nbtItem = NBTItem(this)
+    nbtItem.setString(key, value)
+
+    return nbtItem.item
 }
 
 
 fun ItemStack.tag(key: String): String? {
-    val stack = CraftItemStack.asNMSCopy(this)
-    return if (stack != null && stack.tag != null && stack.tag!!.hasKey(key)) {
-        stack.tag!!.getString(key)
-    } else null
+    val nbtItem = NBTItem(this)
+
+    return if (nbtItem.hasKey(key)) nbtItem.getString(key) else null
 }

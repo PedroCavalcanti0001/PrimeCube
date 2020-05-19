@@ -5,6 +5,5 @@ import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.ICyborgLevel
 
 class CyborgSpeedLevel(override var level: Int,
                        override var price: Double,
-                       override var slotPos: SlotPos,
-                       override var blocksPerSecond: Double) : ICyborgLevel {
+                       override var time: Int) : ICyborgLevel {
 }

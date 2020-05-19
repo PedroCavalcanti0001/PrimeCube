@@ -9,8 +9,10 @@ import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.Main.Companion.singleton
 import me.zkingofkill.primecubes.cube.Cube
 import me.zkingofkill.primecubes.utils.format
+import me.zkingofkill.primecubes.utils.freeSlots
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import utils.CustomHead
 import utils.ItemStackBuilder
 import kotlin.math.roundToLong
 
@@ -21,6 +23,7 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
             .replace("&", "§")
             .replace("{size}", cube.cubeSize.toString())
     private val rows = 6
+    private var page = 1
     private var inventory: SmartInventory = SmartInventory.builder()
             .size(rows, 9)
             .title(title)
@@ -29,6 +32,7 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
             .build()
 
     override fun init(player: Player, contents: InventoryContents) {
+        val allPrice =  cube.allPrice(player)
         val pagination = contents.pagination()
         var itemsSize = 0
         cube.storage.forEach {
@@ -41,22 +45,39 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
         }
         val items = arrayOfNulls<ClickableItem>(itemsSize)
         var index = 0
-        cube.storage.forEach {
-            val cubeBlock = cube.cubeBlockById(it.id)
-            val completePacks = it.amount / 64
-            val incompletePack = it.amount % 64
-
+        cube.storage.forEach { cubeDrop ->
+            val cubeBlock = cube.cubeBlockById(cubeDrop.id)
+            val completePacks = cubeDrop.amount / 64
+            val incompletePack = cubeDrop.amount % 64
             for (cp in (1..completePacks)) {
-                val its = ItemStackBuilder(cubeBlock.itemStack).setAmount(64).build()
+                val its = ItemStackBuilder(cubeBlock.itemStack.clone()).setAmount(64).build()
                 items[index] = ClickableItem.of(its) {
-
+                    if (player.inventory.freeSlots(its) >= 64) {
+                        cubeDrop.amount -= 64
+                        player.inventory.addItem(its)
+                        open()
+                        player.sendMessage(Main.singleton.messagesFile.getString("dropRemoved")
+                                .replace("&", "§"))
+                    } else {
+                        player.sendMessage(Main.singleton.messagesFile.getString("noInventorySpace")
+                                .replace("&", "§"))
+                    }
                 }
                 index += 1
             }
             if (incompletePack != 0) {
-                val its = ItemStackBuilder(cubeBlock.itemStack).setAmount(incompletePack).build()
+                val its = ItemStackBuilder(cubeBlock.itemStack.clone()).setAmount(incompletePack).build()
                 items[index] = ClickableItem.of(its) {
-
+                    if (player.inventory.freeSlots(its) >= incompletePack) {
+                        cubeDrop.amount -= incompletePack
+                        player.inventory.addItem(its)
+                        open()
+                        player.sendMessage(Main.singleton.messagesFile.getString("dropRemoved")
+                                .replace("&", "§"))
+                    } else {
+                        player.sendMessage(Main.singleton.messagesFile.getString("noInventorySpace")
+                                .replace("&", "§"))
+                    }
                 }
                 index += 1
             }
@@ -84,7 +105,7 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
                     .replace("&", "§")
             var itemLore = cf.getStringList("guis.cube.items.$sec.lore")
                     .map { it.replace("&", "§") }
-                    .map { it.replace("{price}", cube.allPrice().format()) }
+                    .map { it.replace("{price}",allPrice.format()) }
 
             val item = cf.getString("guis.cube.items.$sec.item").toUpperCase()
             val itemArgs = item.split(":")
@@ -101,13 +122,38 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
                     .setName(itemName)
                     .setLore(itemLore)
             else {
-                ItemStackBuilder(Main.singleton.headDatabaseAPI.getItemHead(itemId))
+                ItemStackBuilder(CustomHead.itemFromUrl("http://textures.minecraft.net/texture/$itemId"))
                         .setName(itemName)
                         .setLore(itemLore)
             }
             if (sec != "glassPane") {
                 contents.set(row, collunm, ClickableItem.of(itb.build()) {
                     when (sec) {
+                        "previousPage" -> {
+                            page -= 1
+                            inventory.open(player, pagination.previous().page)
+                        }
+                        "nextPage" -> {
+                            page += 1
+                            inventory.open(player, pagination.next().page)
+                        }
+
+                        "sellAll" -> {
+                            val allPrice = cube.allPrice(player)
+
+                            if (allPrice > 0.0) {
+                                singleton.economy.depositPlayer(player, allPrice)
+                                player.sendMessage(Main.singleton.messagesFile.getString("dropsSold")
+                                        .replace("{total}", allPrice.format())
+                                        .replace("&", "§"))
+                                cube.storage = arrayListOf()
+                                open()
+                            } else {
+                                player.sendMessage(Main.singleton.messagesFile.getString("noDrops")
+                                        .replace("&", "§"))
+                            }
+                        }
+
                         "remove" -> {
                             val timeToSuccessfullyRemove = cube.timeToSuccessfullyRemove()
                             if (timeToSuccessfullyRemove <= 0.0) {
@@ -121,6 +167,9 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
                                         .replace("{seconds}", timeToSuccessfullyRemove.roundToLong().toString()))
                             }
                         }
+                        "upgrades" -> {
+                            UpgradeGUI(player, cube).open()
+                        }
                     }
                 })
             } else {
@@ -132,15 +181,6 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
                         }
                     }
                 }
-            }
-        }
-
-        for (cubeDrop in cube.storage) {
-            var stackAmount = 0
-            var dropProps = cube.cubeBlockById(cubeDrop.id)
-
-            if (stackAmount == 64 || cubeDrop.amount <= 64) {
-
             }
         }
     }
@@ -157,30 +197,4 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
     fun close() {
         inventory.close(player)
     }
-}
-
-fun main(args: Array<String>) {
-    data class BlockDrop(val id: Int, val name: String, val amount: Int, var price: Double)
-
-    val storage = arrayListOf(
-            BlockDrop(1, "drop 1", 129, 30.0),
-            BlockDrop(2, "drop 2", 64, 60.0)
-    )
-
-    /*
-       @Key = id
-       @value = quantidade
-     */
-    var withAmounts = hashMapOf<Int, Int>()
-    var itemsSize = 0
-    storage.forEach {
-        val completePacks = it.amount / 64
-        val incompletePack = it.amount % 64
-
-        itemsSize += completePacks
-        if (incompletePack != 0) {
-            itemsSize += 1
-        }
-    }
-
 }

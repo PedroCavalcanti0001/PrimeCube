@@ -5,6 +5,5 @@ import me.zkingofkill.primecubes.cube.upgrade.speed.ISpeedLevel
 
 class SpeedLevel(override var level: Int,
                  override var price: Double,
-                 override var slotPos: SlotPos,
                  override var timeToRegenerate: Int) : ISpeedLevel {
 }

@@ -23,6 +23,7 @@ data class Cuboid(var cube: Cube) {
     private var zMax: Int
     private var zMin: Int
     private val direction = direction()
+    var cyborgLoc: Location
     var l2: Location = secondLoc()
 
     init {
@@ -34,10 +35,36 @@ data class Cuboid(var cube: Cube) {
         this.zMax = max(l1.blockZ, l2.blockZ)
         this.zMin = min(l1.blockZ, l2.blockZ)
 
+        cyborgLoc = cyborgLoc()
+
+    }
+
+    fun cyborgLoc(): Location {
+        var loc = l1.clone()
+        loc.yaw = 0f
+        borders()
+        when (direction) {
+            BlockFace.SOUTH -> {
+                loc.subtract(0.0, 0.0, 0.5).add(0.5, 0.0, 0.0)
+                loc.yaw = 360.0f
+            }
+            BlockFace.NORTH -> {
+                loc.add(0.0, 0.0, 1.5).add(0.5, 0.0, 0.0)
+                loc.yaw = -178.0f
+            }
+            BlockFace.EAST -> {
+                loc.add(0.0, 0.0, 0.5).subtract(0.5,0.0,0.0)
+                loc.yaw = -90.0f
+            }
+            BlockFace.WEST -> {
+                loc.add(1.5, 0.0, 0.5)
+                loc.yaw = 90.0f
+            }
+        }
+        return loc
     }
 
     fun createCube() {
-
         cubeBlocksWithLayers().forEach {
             it.type = cube.nextBlock().itemStack.type
         }
@@ -84,6 +111,7 @@ data class Cuboid(var cube: Cube) {
         val collunm2 = l1.clone()
         val collunm3 = l1.clone()
         val collunm4 = l1.clone()
+
         when (direction) {
             BlockFace.NORTH -> {
                 collunm1.subtract(1.0, 0.0, 0.0).add(0.0, 0.0, 1.0)
@@ -110,10 +138,6 @@ data class Cuboid(var cube: Cube) {
                 collunm4.add(x, 0.0, z)
             }
         }
-        var collunm1Top = collunm1.clone().add(0.0, y, 0.0)
-        var collunm2Top = collunm2.clone().add(0.0, y, 0.0)
-        var collunm3Top = collunm3.clone().add(0.0, y, 0.0)
-        var collunm4Top = collunm4.clone().add(0.0, y, 0.0)
 
         blocks.addAll(blocksFromTwoPoints(collunm1.clone().subtract(0.0, 1.0, 0.0),
                 collunm2.clone().subtract(0.0, 1.0, 0.0)))
@@ -126,6 +150,12 @@ data class Cuboid(var cube: Cube) {
 
         blocks.addAll(blocksFromTwoPoints(collunm3.clone().subtract(0.0, 1.0, 0.0),
                 collunm4.clone().subtract(0.0, 1.0, 0.0)))
+
+        var collunm1Top = collunm1.clone().add(0.0, y, 0.0)
+        var collunm2Top = collunm2.clone().add(0.0, y, 0.0)
+        var collunm3Top = collunm3.clone().add(0.0, y, 0.0)
+        var collunm4Top = collunm4.clone().add(0.0, y, 0.0)
+
         blocks.addAll(blocksFromTwoPoints(collunm1, collunm1Top))
         blocks.addAll(blocksFromTwoPoints(collunm2, collunm2Top))
         blocks.addAll(blocksFromTwoPoints(collunm3, collunm3Top))

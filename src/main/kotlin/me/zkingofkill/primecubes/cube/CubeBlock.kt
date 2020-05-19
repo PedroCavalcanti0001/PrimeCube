@@ -10,5 +10,4 @@ class CubeBlock(var id: Int,
                 var chance: Double,
                 var unitPrice: Double){
 
-
 }

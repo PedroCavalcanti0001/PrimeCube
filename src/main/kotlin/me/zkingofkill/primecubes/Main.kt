@@ -1,8 +1,8 @@
 package me.zkingofkill.primecubes
 
 import fr.minuskube.inv.InventoryManager
-import me.arcaniax.hdb.api.HeadDatabaseAPI
 import me.zkingofkill.primecubes.command.CubeCommand
+import me.zkingofkill.primecubes.database.Mysql
 import me.zkingofkill.primecubes.listener.CubeListeners
 import me.zkingofkill.primecubes.manager.CubeManager
 import net.milkbowl.vault.economy.Economy
@@ -19,11 +19,13 @@ class Main : JavaPlugin() {
 
     lateinit var economy: Economy
     lateinit var inventoryManager: InventoryManager
+
     //lateinit var mysql: Mysql
     lateinit var upgradesFile: ConfigurationFile
     lateinit var messagesFile: ConfigurationFile
     lateinit var cubesFile: ConfigurationFile
-    lateinit var headDatabaseAPI: HeadDatabaseAPI
+    lateinit var mysql: Mysql
+    var shopGUIPlusHook: Boolean = false
 
 
     override fun onEnable() {
@@ -32,27 +34,35 @@ class Main : JavaPlugin() {
 
         inventoryManager = InventoryManager(this)
         inventoryManager.init()
-        headDatabaseAPI = HeadDatabaseAPI()
 
-        /* mysql = Mysql()
-         mysql.init()
 
-         User.delayedSaveAll()
-
-         */
         if (Bukkit.getServer().pluginManager.getPlugin("Vault") != null) {
             val rsp =
                     Bukkit.getServer().servicesManager.getRegistration(Economy::class.java)
             economy = rsp.provider
         }
+
+        if (Bukkit.getServer().pluginManager.getPlugin("ShopGUIPlus") != null) {
+            shopGUIPlusHook = config.getBoolean("hookWithShopGuiPlus")
+        }
+
+
+
+        mysql = Mysql()
+        mysql.init()
+        CubeManager.delayedSaveAll()
         CubeManager.init()
+
+        server.scheduler.runTask(this) {
+            CubeManager.list.addAll(mysql.loadCubes())
+        }
 
         getCommand("cube").executor = CubeCommand()
         server.pluginManager.registerEvents(CubeListeners(), this)
     }
 
     override fun onDisable() {
-
+        CubeManager.saveAll()
     }
 
     fun initConfig() {

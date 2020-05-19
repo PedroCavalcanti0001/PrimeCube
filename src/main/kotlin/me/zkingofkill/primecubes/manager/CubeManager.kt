@@ -2,36 +2,58 @@ package me.zkingofkill.primecubes.manager
 
 import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.cube.Cube
+import me.zkingofkill.primecubes.cube.CubeBlockLocation
+import me.zkingofkill.primecubes.cube.CubeProps
+import me.zkingofkill.primecubes.cube.UpgradeType
+import me.zkingofkill.primecubes.cube.upgrade.cyborgfortune.impl.CyborgFortuneLevel
 import me.zkingofkill.primecubes.utils.freeSlots
 import org.bukkit.Material
+import org.bukkit.Sound
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
+import org.bukkit.entity.Zombie
+import utils.ItemStackBuilder
+import kotlin.random.Random
 
 class CubeManager(var cube: Cube) {
 
     fun remove(player: Player) {
-        val itemstack = cube.itemStack()
+        var itemstack = cube.itemStack()
+        if (cube.isAtMaximum() && cube.props.nextCube != null) {
+            val cubeProps = CubeProps.byTypeId(cube.props.nextCube!!)
+            if (cubeProps != null) {
+                itemstack = cubeProps.itemStack()
+                player.sendMessage(Main.singleton.messagesFile.getString("cubeUpToTheNextLevel")
+                        .replace("&", "§"))
+            }
+        }
+        cube.cuboid.cyborgLoc.world.entities.forEach {
+            if (it is ArmorStand) {
+                if (it.location == cube.cuboid.cyborgLoc) {
+                    it.remove()
+                }
+            }
+        }
+        this.cube.deleted = true
         if (player.inventory.freeSlots(itemstack) >= 1) {
             player.inventory.addItem(itemstack)
         } else {
             cube.location.world.dropItemNaturally(cube.location, itemstack)
         }
         cube.cuboid.allBlocks().forEach { it.type = Material.AIR }
-        list.remove(cube)
     }
 
     fun place() {
         cube.cuboid.createCube()
+        Main.singleton.server.scheduler.runTask(Main.singleton) {
+            if (cube.unlockedCyborg()) {
+                val level = cube.level(UpgradeType.CYBORGSPEED)
+                if (level >= 1) {
+                    cube.spawnCyborg()
+                }
+            }
+        }
         list.add(cube)
-
-
-    }
-
-    fun persist() {
-
-    }
-
-    fun add() {
-
     }
 
 
@@ -44,7 +66,7 @@ class CubeManager(var cube: Cube) {
 
         fun init() {
             Main.singleton.server.scheduler.runTaskTimer(Main.singleton, {
-                list.forEach { cube ->
+                list.filter { !it.deleted }.forEach { cube ->
                     cube.cuboid.cubeBlocksWithLayers().forEach {
                         if (it.type == Material.AIR) {
                             val location = it.location
@@ -55,10 +77,57 @@ class CubeManager(var cube: Cube) {
                             }
                         }
                     }
+                    if (cube.unlockedCyborg()) {
+                        if (cube.cyborg.isToBreak()) {
+                            val block = cube.cuboid.cubeBlocksWithLayers().filter { it.type != Material.AIR }.random()
+                            var itemStack = ItemStackBuilder(block.type).setDurability(block.data.toInt()).build()
+                            var cubeBlock = cube.cubeBlockByItemStack(itemStack)
+                            val location = block.location
+                            if (cube.availableStock(cubeBlock.id) >= 1) {
+                                location.world.getNearbyEntities(location, 5.0, 5.0, 5.0)
+                                        .filter { it is Player }
+                                        .map { it as Player }
+                                        .forEach { it.playSound(location, Sound.BLOCK_STONE_BREAK, 1f, 1f) }
+                                block.type = Material.AIR
+                                val find = cube.findCubeBlockLocation(location)
+                                if (find == null) {
+                                    cube.cubeBlockLocations.add(CubeBlockLocation(location, System.currentTimeMillis()))
+                                } else {
+                                    find.lastBreak = System.currentTimeMillis()
+                                }
+                                var amount = 1
+                                var levelFortune = cube.level(UpgradeType.CYBORGFORTUNE)
+
+                                if (levelFortune > 0) {
+                                    val cyborgFortuneLevel = cube.iUpgradeLevelByLevel(UpgradeType.CYBORGFORTUNE, levelFortune) as CyborgFortuneLevel
+                                    val rd = Random.nextInt(100) + 1
+                                    if (cyborgFortuneLevel.chance >= rd) {
+                                        amount = Random.nextInt(cyborgFortuneLevel.multiply) + 1
+                                    }
+                                }
+                                cube.addDrop(cubeBlock.id, amount)
+                            }
+                        }
+                    }
                 }
             }, 20, 20)
         }
 
+        fun saveAll() {
+            val mysql = Main.singleton.mysql
+            for (it in list) {
+                if (it.deleted) {
+                    mysql.delete(it)
+                } else {
+                    mysql.upsert(it)
+                }
+            }
+        }
 
+        fun delayedSaveAll() {
+            Main.singleton.server.scheduler.runTaskTimerAsynchronously(Main.singleton, {
+                saveAll()
+            }, 20 * 5 * 60, 20 * 5 * 60)
+        }
     }
 }

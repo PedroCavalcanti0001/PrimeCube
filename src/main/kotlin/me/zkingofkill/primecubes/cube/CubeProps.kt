@@ -7,6 +7,7 @@ import me.zkingofkill.primecubes.exception.UpgradeNotFoundException
 import me.zkingofkill.primecubes.utils.tag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import utils.CustomHead
 import utils.ItemStackBuilder
 
 data class CubeProps(
@@ -17,6 +18,7 @@ data class CubeProps(
         var maxLife: Double,
         var upgrades: ArrayList<UpgradeType>,
         var defaultSections: Int,
+        var nextCube: Int?,
         var defaultStorage: Int,
         var defaultSpeed: Int,
         var activatedCyborg: Boolean) {
@@ -32,7 +34,7 @@ data class CubeProps(
             var index = lore.indexOf(line)
             lore.remove(line)
             upgrades.forEach {
-                val upgrade = IUpgrade.byType(it) ?: throw UpgradeNotFoundException(it)
+                val upgrade = IUpgrade.byType(it) ?: throw UpgradeNotFoundException(it.name)
                 itemStack = itemStack.tag("{primecubes_level_$it}", 0.toString())
                 lore.add(index, line.replace("{UpgradeName}", upgrade.name)
                         .replace("{upgradeLevel}", "0")
@@ -61,6 +63,7 @@ data class CubeProps(
                 val maxLife = cubesFile.getDouble("$id.maxLife")
                 val defaultSections = cubesFile.getInt("$id.defaultSections")
                 val defaultStorage = cubesFile.getInt("$id.defaultStorage")
+                val nextCube = if (cubesFile.getInt("$id.nextCube") == -1) null else cubesFile.getInt("$id.nextCube")
                 val defaultSpeed = cubesFile.getInt("$id.defaultSpeed")
                 val item = cubesFile.getString("$id.item").toUpperCase()
                 val lore = cubesFile.getStringList("$id.lore")
@@ -75,7 +78,7 @@ data class CubeProps(
                             .setLore(lore)
                             .setDurability(itemDate).build()
                 } else {
-                    ItemStackBuilder(Main.singleton.headDatabaseAPI.getItemHead(itemId))
+                    ItemStackBuilder(CustomHead.itemFromUrl("http://textures.minecraft.net/texture/$itemId"))
                             .setName(name)
                             .setLore(lore).build()
                 }
@@ -91,7 +94,10 @@ data class CubeProps(
                     val blockItemDate = if (itemArgs.size == 2) itemArgs[1].toInt() else 0
                     val blockItemStack = ItemStackBuilder(Material.getMaterial(blockItemId.toUpperCase()))
                             .setDurability(blockItemDate).build()
-                    val cubeBlock = CubeBlock(sec.toInt(), blockItemStack, blockChance, unitPrice)
+                    val cubeBlock = CubeBlock(sec.toInt(),
+                            itemStack = blockItemStack,
+                            chance = blockChance,
+                            unitPrice = unitPrice)
                     blocks.add(cubeBlock)
                 }
                 val cube = CubeProps(typeId = id.toInt(),
@@ -103,7 +109,9 @@ data class CubeProps(
                         defaultSections = defaultSections,
                         defaultStorage = defaultStorage,
                         activatedCyborg = activatedCyborg,
+                        nextCube = nextCube,
                         defaultSpeed = defaultSpeed)
+                list.add(cube)
             }
             return list
         }

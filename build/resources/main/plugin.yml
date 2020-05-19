@@ -1,11 +1,12 @@
 name: PrimeCubes
 description: mine/cyborgs plugin.
 author: zKingOfKill
+#api-version: '1.15'
 depend:
   - Vault
-  - HeadDatabase
 softdepend:
   - KoTH
+  - ShopGUIPlus
 version: '1.12.2'
 main: me.zkingofkill.primecubes.Main
 
