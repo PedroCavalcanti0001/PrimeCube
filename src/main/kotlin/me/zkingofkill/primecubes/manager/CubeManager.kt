@@ -6,12 +6,11 @@ import me.zkingofkill.primecubes.cube.CubeBlockLocation
 import me.zkingofkill.primecubes.cube.CubeProps
 import me.zkingofkill.primecubes.cube.UpgradeType
 import me.zkingofkill.primecubes.cube.upgrade.cyborgfortune.impl.CyborgFortuneLevel
-import me.zkingofkill.primecubes.utils.freeSlots
+import me.zkingofkill.primecubes.util.freeSlots
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
-import org.bukkit.entity.Zombie
 import utils.ItemStackBuilder
 import kotlin.random.Random
 
@@ -40,6 +39,11 @@ class CubeManager(var cube: Cube) {
         } else {
             cube.location.world.dropItemNaturally(cube.location, itemstack)
         }
+        val allPrice = cube.allPrice(player)
+        if (allPrice > 0.0) {
+            Main.singleton.economy.depositPlayer(player, allPrice)
+            cube.storage = arrayListOf()
+        }
         cube.cuboid.allBlocks().forEach { it.type = Material.AIR }
     }
 
@@ -67,7 +71,7 @@ class CubeManager(var cube: Cube) {
         fun init() {
             Main.singleton.server.scheduler.runTaskTimer(Main.singleton, {
                 list.filter { !it.deleted }.forEach { cube ->
-                    cube.cuboid.cubeBlocksWithLayers().forEach {
+                    cube.cuboid.cubeBlocksWhitoutLayers().forEach {
                         if (it.type == Material.AIR) {
                             val location = it.location
                             val canBreak = cube.canNowRenegerateTheBlock(location)
@@ -79,7 +83,9 @@ class CubeManager(var cube: Cube) {
                     }
                     if (cube.unlockedCyborg()) {
                         if (cube.cyborg.isToBreak()) {
-                            val block = cube.cuboid.cubeBlocksWithLayers().filter { it.type != Material.AIR }.random()
+                            val blocks = cube.cuboid.cubeBlocksWithLayers().filter { it.type != Material.AIR }
+                            if (blocks.isEmpty()) return@forEach
+                            val block = blocks.random()
                             var itemStack = ItemStackBuilder(block.type).setDurability(block.data.toInt()).build()
                             var cubeBlock = cube.cubeBlockByItemStack(itemStack)
                             val location = block.location

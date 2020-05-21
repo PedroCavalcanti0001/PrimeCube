@@ -7,8 +7,8 @@ import me.zkingofkill.primecubes.cube.upgrade.cyborgfortune.impl.CyborgFortuneLe
 import me.zkingofkill.primecubes.cube.upgrade.cyborgfortune.impl.CyborgFortuneUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.impl.CyborgSpeedLevel
 import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.impl.CyborgSpeedUpgrade
-import me.zkingofkill.primecubes.cube.upgrade.layers.impl.LayersLevel
-import me.zkingofkill.primecubes.cube.upgrade.layers.impl.LayersUpgrade
+import me.zkingofkill.primecubes.cube.upgrade.cyborglayers.impl.LayersLevel
+import me.zkingofkill.primecubes.cube.upgrade.cyborglayers.impl.LayersUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.loot.impl.LootLevel
 import me.zkingofkill.primecubes.cube.upgrade.loot.impl.LootUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.speed.impl.SpeedLevel
@@ -92,7 +92,7 @@ interface IUpgrade<ImplLevel> {
                         val upgrade = CyborgFortuneUpgrade(upgradeName, slotPos, itemStack, levels, upgradeType = upgradeType) as IUpgrade<Any>
                         list.add(upgrade)
                     }
-                    UpgradeType.LAYERS -> {
+                    UpgradeType.CYBORGLAYERS -> {
                         val levels = arrayListOf<LayersLevel>()
                         for (levelSec in upgradesFile.getConfigurationSection("$sec.levels").getKeys(false)) {
                             val price = upgradesFile.getDouble("$sec.levels.$levelSec.price")

@@ -10,7 +10,8 @@ class CubeCyborg(var cube: Cube, var lastBreak: Long = System.currentTimeMillis(
         val levels = iupgrade.levels as ArrayList<CyborgSpeedLevel>
         var f = -1.0
         val now = System.currentTimeMillis()
-        val totalTime = levels.find { it.level == level }!!.time
+        val levelF =  levels.find { it.level == level } ?: return false
+        val totalTime = levelF.time
         val r = (now - lastBreak) / 1000
         f = ((r - totalTime) * -1).toDouble()
         return if (f <= 0) {

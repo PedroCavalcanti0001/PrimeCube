@@ -8,8 +8,8 @@ import fr.minuskube.inv.content.SlotIterator
 import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.Main.Companion.singleton
 import me.zkingofkill.primecubes.cube.Cube
-import me.zkingofkill.primecubes.utils.format
-import me.zkingofkill.primecubes.utils.freeSlots
+import me.zkingofkill.primecubes.util.format
+import me.zkingofkill.primecubes.util.freeSlots
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import utils.CustomHead
@@ -140,7 +140,6 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
 
                         "sellAll" -> {
                             val allPrice = cube.allPrice(player)
-
                             if (allPrice > 0.0) {
                                 singleton.economy.depositPlayer(player, allPrice)
                                 player.sendMessage(Main.singleton.messagesFile.getString("dropsSold")

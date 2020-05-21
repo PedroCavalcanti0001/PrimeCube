@@ -19,8 +19,6 @@ class Main : JavaPlugin() {
 
     lateinit var economy: Economy
     lateinit var inventoryManager: InventoryManager
-
-    //lateinit var mysql: Mysql
     lateinit var upgradesFile: ConfigurationFile
     lateinit var messagesFile: ConfigurationFile
     lateinit var cubesFile: ConfigurationFile
@@ -34,8 +32,6 @@ class Main : JavaPlugin() {
 
         inventoryManager = InventoryManager(this)
         inventoryManager.init()
-
-
         if (Bukkit.getServer().pluginManager.getPlugin("Vault") != null) {
             val rsp =
                     Bukkit.getServer().servicesManager.getRegistration(Economy::class.java)

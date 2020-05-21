@@ -18,7 +18,7 @@
     - '&7&oPut it on the ground to start generating ores!'
   upgrades:
     - SPEED
-    - Layers
+    - CYBORGLAYERS
   blocks:
     '0':
       item: 'STONE'
@@ -52,7 +52,7 @@
     - '&7&oPut it on the ground to start generating ores!'
   upgrades:
     - CYBORGFORTUNE
-    - LAYERS
+    - CYBORGLAYERS
     - SPEED
     - LOOT
     - CYBORGSPEED

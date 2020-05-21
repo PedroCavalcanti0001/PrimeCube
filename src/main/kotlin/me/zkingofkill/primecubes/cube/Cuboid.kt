@@ -65,7 +65,7 @@ data class Cuboid(var cube: Cube) {
     }
 
     fun createCube() {
-        cubeBlocksWithLayers().forEach {
+        cubeBlocksWhitoutLayers().forEach {
             it.type = cube.nextBlock().itemStack.type
         }
         val borders = borders()
@@ -231,9 +231,9 @@ data class Cuboid(var cube: Cube) {
     }
 
     fun allBlocks(): ArrayList<Block> {
-        val borders = ArrayList(borders())
-        borders.addAll(blocksFromTwoPoints(l1, l2).toList())
-        return borders
+        val blocks = ArrayList(cubeBlocksWhitoutLayers())
+        blocks.addAll(borders())
+        return blocks
     }
 
     private fun secondLoc(): Location {

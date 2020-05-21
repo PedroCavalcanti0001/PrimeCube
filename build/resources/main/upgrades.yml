@@ -100,11 +100,11 @@
       chance: 25
       price: 500
 
-"LAYERS":
-  name: "&aLayers Upgrade"
+"CYBORGLAYERS":
+  name: "&aCyborg Layers Upgrade"
   item: "1"
   lore:
-    - "&aLayers"
+    - "&aCyborg Layers"
   position:
     row: 0
     collunm: 4

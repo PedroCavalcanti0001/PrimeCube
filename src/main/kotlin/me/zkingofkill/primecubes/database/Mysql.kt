@@ -7,9 +7,8 @@ import me.zkingofkill.primecubes.Main.Companion.singleton
 import me.zkingofkill.primecubes.cube.Cube
 import me.zkingofkill.primecubes.cube.CubeDrop
 import me.zkingofkill.primecubes.cube.UpgradeType
-import me.zkingofkill.primecubes.manager.CubeManager
-import me.zkingofkill.primecubes.utils.locDeserializer
-import me.zkingofkill.primecubes.utils.locSerializer
+import me.zkingofkill.primecubes.util.locDeserializer
+import me.zkingofkill.primecubes.util.locSerializer
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement

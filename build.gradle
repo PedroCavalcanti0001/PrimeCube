@@ -25,7 +25,7 @@ repositories {
 
 }
 dependencies {
-
+    compile "com.zaxxer:HikariCP:3.4.5"
     compileOnly fileTree(dir: '/../../libs/plugins', include: ['*.jar'])
     compileOnly fileTree(dir: '/../../libs/spigot/1122', include: ['*.jar'])
     testCompile group: 'junit', name: 'junit', version: '4.12'

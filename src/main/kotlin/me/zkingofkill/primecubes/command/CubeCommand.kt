@@ -2,7 +2,7 @@ package me.zkingofkill.primecubes.command
 
 import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.cube.CubeProps
-import me.zkingofkill.primecubes.utils.freeSlots
+import me.zkingofkill.primecubes.util.freeSlots
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

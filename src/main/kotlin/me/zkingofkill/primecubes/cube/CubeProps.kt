@@ -4,7 +4,7 @@ import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.cube.upgrade.IUpgrade
 import me.zkingofkill.primecubes.exception.CubePropsNotFoundException
 import me.zkingofkill.primecubes.exception.UpgradeNotFoundException
-import me.zkingofkill.primecubes.utils.tag
+import me.zkingofkill.primecubes.util.tag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import utils.CustomHead

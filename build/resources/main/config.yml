@@ -30,12 +30,12 @@ guis:
         position:
           row: 1
           collunm: 2
-      layers:
+      cyborgLayers:
         item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
-        name: "&2&lLayers upgrade"
+        name: "&2&lCyborg Layers upgrade"
         lore:
           - ""
-          - "&bCube layers: &c{current} &b-> &a{next}"
+          - "&bCyborg Layers: &c{current} &b-> &a{next}"
           - " "
           - "&bCurrent level: &f{currentLevel}"
           - "&bNext level: &f{nextLevel}"

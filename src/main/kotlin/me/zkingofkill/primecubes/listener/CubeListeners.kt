@@ -6,8 +6,8 @@ import me.zkingofkill.primecubes.cube.CubeBlockLocation
 import me.zkingofkill.primecubes.cube.CubeProps
 import me.zkingofkill.primecubes.cube.UpgradeType
 import me.zkingofkill.primecubes.gui.MainGUI
-import me.zkingofkill.primecubes.utils.removeItems
-import me.zkingofkill.primecubes.utils.tag
+import me.zkingofkill.primecubes.util.removeItems
+import me.zkingofkill.primecubes.util.tag
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.event.EventHandler
@@ -42,14 +42,15 @@ class CubeListeners : Listener {
                             upgrades[it] = level
                         }
                         val cube = Cube(typeId = type, owner = player.name, location = location, upgrades = upgrades)
-                        if (cube.enoughSpace(location)) {
-                            cube.manager.place()
-                            Main.singleton.server.scheduler.runTask(Main.singleton) {
+                        Main.singleton.server.scheduler.runTask(Main.singleton) {
+                            if (cube.enoughSpace()) {
+                                cube.manager.place()
                                 player.inventory.removeItems(mainHand, 1)
+
+                            } else {
+                                player.sendMessage(Main.singleton.messagesFile.getString("noSpace")
+                                        .replace("&", "§"))
                             }
-                        } else {
-                            player.sendMessage(Main.singleton.messagesFile.getString("noSpace")
-                                    .replace("&", "§"))
                         }
                     }
                     event.isCancelled = true
@@ -62,20 +63,20 @@ class CubeListeners : Listener {
             }
         }
     }
-
-    /*
+/*
     @EventHandler
-    fun onKothEnd(event:KothEndEvent){
+    fun onKothEnd(event: KothEndEvent) {
         val winner = event.winner
-        winner.
+        if(winner != null){
+            winner.
     }
 
-     */
+ */
 
 
     @EventHandler
     fun onArmorStandManipulate(event: PlayerInteractAtEntityEvent) {
-        if (event.rightClicked !is ArmorStand) return
+        println(event.clickedPosition.toBlockVector().toLocation(event.player.world))
         val location = event.rightClicked.location
         val find = Cube.allCyborgLocations().find {
             it.y == location.y &&
@@ -103,6 +104,8 @@ class CubeListeners : Listener {
 
 
     }
+
+
 /*
     @EventHandler
     fun entityDamage(event: EntityDamageEvent) {

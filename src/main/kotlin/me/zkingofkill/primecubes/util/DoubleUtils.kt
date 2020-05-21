@@ -1,4 +1,4 @@
-package me.zkingofkill.primecubes.utils
+package me.zkingofkill.primecubes.util
 
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols

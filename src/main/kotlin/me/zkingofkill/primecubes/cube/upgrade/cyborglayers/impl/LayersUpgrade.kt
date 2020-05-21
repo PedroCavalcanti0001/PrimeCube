@@ -1,4 +1,4 @@
-package me.zkingofkill.primecubes.cube.upgrade.layers.impl
+package me.zkingofkill.primecubes.cube.upgrade.cyborglayers.impl
 
 import fr.minuskube.inv.content.SlotPos
 import me.zkingofkill.primecubes.cube.UpgradeType

@@ -1,7 +1,7 @@
 package me.zkingofkill.primecubes.cube
 
 enum class UpgradeType {
-    CYBORGFORTUNE, LOOT, CYBORGSPEED, LAYERS, SPEED, STORAGE;
+    CYBORGFORTUNE, LOOT, CYBORGSPEED, CYBORGLAYERS, SPEED, STORAGE;
 
     companion object {
         fun contains(name: String): Boolean {

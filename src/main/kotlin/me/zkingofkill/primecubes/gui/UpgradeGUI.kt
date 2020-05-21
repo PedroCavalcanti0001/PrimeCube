@@ -10,11 +10,11 @@ import me.zkingofkill.primecubes.cube.Cube
 import me.zkingofkill.primecubes.cube.UpgradeType
 import me.zkingofkill.primecubes.cube.upgrade.cyborgfortune.impl.CyborgFortuneLevel
 import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.impl.CyborgSpeedLevel
-import me.zkingofkill.primecubes.cube.upgrade.layers.impl.LayersLevel
+import me.zkingofkill.primecubes.cube.upgrade.cyborglayers.impl.LayersLevel
 import me.zkingofkill.primecubes.cube.upgrade.loot.impl.LootLevel
 import me.zkingofkill.primecubes.cube.upgrade.speed.impl.SpeedLevel
 import me.zkingofkill.primecubes.cube.upgrade.storage.impl.StorageLevel
-import me.zkingofkill.primecubes.utils.format
+import me.zkingofkill.primecubes.util.format
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import utils.CustomHead
@@ -85,7 +85,7 @@ class UpgradeGUI(var player: Player, var cube: Cube) : InventoryProvider {
                             itemLore.map { it.replace("{next}", "max") }
                         }
                     }
-                    "layers" -> {
+                    "cyborgLayers" -> {
                         itemLore = if (level == 0) {
                             itemLore
                                     .map { it.replace("{current}", cube.props.defaultSections.toString()) }

@@ -1,4 +1,4 @@
-package me.zkingofkill.primecubes.utils
+package me.zkingofkill.primecubes.util
 
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory

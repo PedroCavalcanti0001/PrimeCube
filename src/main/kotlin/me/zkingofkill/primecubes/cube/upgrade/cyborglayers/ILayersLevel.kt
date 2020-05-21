@@ -1,6 +1,5 @@
-package me.zkingofkill.primecubes.cube.upgrade.layers
+package me.zkingofkill.primecubes.cube.upgrade.cyborglayers
 
-import fr.minuskube.inv.content.SlotPos
 import me.zkingofkill.primecubes.cube.upgrade.IUpgradeLevel
 
 interface ILayersLevel : IUpgradeLevel{

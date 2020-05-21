@@ -3,13 +3,13 @@ package me.zkingofkill.primecubes.cube
 import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.cube.upgrade.IUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.IUpgradeLevel
-import me.zkingofkill.primecubes.cube.upgrade.layers.impl.LayersUpgrade
+import me.zkingofkill.primecubes.cube.upgrade.cyborglayers.impl.LayersUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.loot.impl.LootUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.speed.impl.SpeedUpgrade
 import me.zkingofkill.primecubes.cube.upgrade.storage.impl.StorageUpgrade
 import me.zkingofkill.primecubes.exception.UpgradeNotFoundException
 import me.zkingofkill.primecubes.manager.CubeManager
-import me.zkingofkill.primecubes.utils.tag
+import me.zkingofkill.primecubes.util.tag
 import net.brcdev.shopgui.ShopGuiPlusApi
 import org.bukkit.Location
 import org.bukkit.Material
@@ -127,21 +127,16 @@ data class Cube(var typeId: Int,
         }
     }
 
-    fun enoughSpace(location: Location): Boolean {
-        val allBlocks = this.cuboid.allBlocks().filter {
-            it.location.blockX != location.blockX &&
-                    it.location.blockY != location.blockY &&
-                    it.location.blockZ != location.blockZ
-        }
-
+    fun enoughSpace(): Boolean {
+        val allBlocks = cuboid.allBlocks()
         val find = allBlocks.find { it.type != Material.AIR }
         return find == null
     }
 
     fun availableLayers(): Int {
-        val levelSections = level(UpgradeType.LAYERS)
-        val upgrade = IUpgrade.byType(UpgradeType.LAYERS) as LayersUpgrade
-        return return if (!this.props.upgrades.contains(UpgradeType.LAYERS) || levelSections == 0)
+        val levelSections = level(UpgradeType.CYBORGLAYERS)
+        val upgrade = IUpgrade.byType(UpgradeType.CYBORGLAYERS) as LayersUpgrade
+        return return if (!this.props.upgrades.contains(UpgradeType.CYBORGLAYERS) || levelSections == 0)
             this.props.defaultSections else upgrade.levels.find { it.level == levelSections }!!.sections
     }
 
@@ -274,7 +269,7 @@ data class Cube(var typeId: Int,
 
         fun breakZoneByLocation(location: Location): Cube? {
             return CubeManager.list.filter { !it.deleted }.find { cube ->
-                cube.cuboid.cubeBlocksWithLayers().filter { block ->
+                cube.cuboid.cubeBlocksWhitoutLayers().filter { block ->
                     block.location.blockX == location.blockX &&
                             block.location.blockY == location.blockY &&
                             block.location.blockZ == location.blockZ
