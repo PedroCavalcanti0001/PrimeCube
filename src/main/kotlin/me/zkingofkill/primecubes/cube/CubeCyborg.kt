@@ -1,11 +1,12 @@
 package me.zkingofkill.primecubes.cube
 
 import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.impl.CyborgSpeedLevel
+import me.zkingofkill.primecubes.exception.UpgradeNotFoundException
 
 class CubeCyborg(var cube: Cube, var lastBreak: Long = System.currentTimeMillis()) {
 
     fun isToBreak(): Boolean {
-        val iupgrade = cube.iUpgrade(UpgradeType.CYBORGSPEED)
+        val iupgrade = cube.iUpgrade(UpgradeType.CYBORGSPEED) ?: throw UpgradeNotFoundException(UpgradeType.CYBORGSPEED.name)
         val level = cube.level(UpgradeType.CYBORGSPEED)
         val levels = iupgrade.levels as ArrayList<CyborgSpeedLevel>
         var f = -1.0

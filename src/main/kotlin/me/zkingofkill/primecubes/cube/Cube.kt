@@ -40,7 +40,7 @@ data class Cube(var typeId: Int,
     fun timeToSuccessfullyRemove(): Double {
         var f = -1.0
         val now = System.currentTimeMillis()
-        val totalTime = Main.singleton.cubesFile.getInt("timeToRemove")
+        val totalTime = this.props.timeToRemove
         val r = (now - placeTime) / 1000
         f = (((r - totalTime) * -1).toDouble())
         return f
@@ -76,35 +76,30 @@ data class Cube(var typeId: Int,
         return upgrade?.value ?: 0
     }
 
-    fun iUpgrade(upgradeType: UpgradeType): IUpgrade<Any> {
-        var upgrade = IUpgrade.byType(upgradeType) as IUpgrade<Any>
-        return upgrade
-
+    fun iUpgrade(upgradeType: UpgradeType): IUpgrade<Any>? {
+        val find = props.upgrades.find { it.upgradeType == upgradeType }
+        return find
     }
 
     fun iUpgradeLevelByLevel(upgradeType: UpgradeType, level: Int): IUpgradeLevel {
-        val iupgrade = iUpgrade(upgradeType)
+        val iupgrade = iUpgrade(upgradeType) ?: throw UpgradeNotFoundException(upgradeType.name)
         val levels = iupgrade.levels as ArrayList<IUpgradeLevel>
         return levels.find { it.level == level }!!
 
     }
 
     fun isAtMaximum(): Boolean {
-        var isAtMaximum = true
-        props.upgrades.forEach { upgradeProp ->
-            val iUpgrade = iUpgrade(upgradeProp)
-            val find = upgrades.entries.find { upgrade -> upgrade.key == upgradeProp }
-            isAtMaximum = if (find != null) {
-                iUpgrade.levelMax == find.value
-            } else false
-        }
-        return isAtMaximum
+        return (props.upgrades.find { upgradeProp ->
+            val activatedCyborg = props.activatedCyborg
+            val find = upgrades.entries.find { upgrade -> upgrade.key == upgradeProp.upgradeType}
+            (find == null) || (upgradeProp.levelMax != find.value)
+        }) == null
     }
 
 
     fun timeToRegenerate(): Int {
         val level = level(UpgradeType.SPEED)
-        val upgrade = IUpgrade.byType(UpgradeType.SPEED) as SpeedUpgrade
+        val upgrade = iUpgrade(UpgradeType.SPEED) as SpeedUpgrade
         return if (level == 0) {
             this.props.defaultSpeed
         } else upgrade.levels.find { it.level == level }!!.timeToRegenerate
@@ -135,14 +130,14 @@ data class Cube(var typeId: Int,
 
     fun availableLayers(): Int {
         val levelSections = level(UpgradeType.CYBORGLAYERS)
-        val upgrade = IUpgrade.byType(UpgradeType.CYBORGLAYERS) as LayersUpgrade
-        return return if (!this.props.upgrades.contains(UpgradeType.CYBORGLAYERS) || levelSections == 0)
+        val upgrade = iUpgrade(UpgradeType.CYBORGLAYERS) as LayersUpgrade
+        return return if (levelSections == 0)
             this.props.defaultSections else upgrade.levels.find { it.level == levelSections }!!.sections
     }
 
     fun availableStock(id: Int): Int {
         val levelStorage = level(UpgradeType.STORAGE)
-        val upgrade = IUpgrade.byType(UpgradeType.STORAGE) as StorageUpgrade
+        val upgrade = iUpgrade(UpgradeType.STORAGE) as StorageUpgrade
         val totalStock = if (levelStorage == 0) this.props.defaultStorage else upgrade.levels.find { it.level == levelStorage }!!.totalAmountPerDrop
         val find = storage.find { it.id == id }
         return if (find != null) totalStock - find.amount else totalStock
@@ -186,7 +181,7 @@ data class Cube(var typeId: Int,
         val dropStorage = storage.find { it.id == id }
         var level = level(UpgradeType.LOOT)
         var price = if (level > 0) {
-            val upgrade = IUpgrade.byType(UpgradeType.LOOT) as LootUpgrade
+            val upgrade = iUpgrade(UpgradeType.LOOT) as LootUpgrade
             val percentage = upgrade.levels.find { it.level == level }!!.increasePercentage
 
             cubeBlock.unitPrice + (cubeBlock.unitPrice * percentage / 100)
@@ -241,10 +236,10 @@ data class Cube(var typeId: Int,
             var index = lore.indexOf(line)
             lore.remove(line)
             props.upgrades.forEach {
-                val upgrade = IUpgrade.byType(it) ?: throw UpgradeNotFoundException(it.name)
-                val level = level(it)
+
+                val level = level(it.upgradeType)
                 itemStack = itemStack.tag("{primecubes_${it}}", level.toString())
-                lore.add(index, line.replace("{UpgradeName}", upgrade.name)
+                lore.add(index, line.replace("{UpgradeName}", it.upgradeType.name)
                         .replace("{upgradeLevel}", level.toString())
                         .replace("&", "§"))
                 index++

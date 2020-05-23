@@ -15,11 +15,27 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import utils.ItemStackBuilder
 
 class CubeListeners : Listener {
+
+    @EventHandler
+    fun onArmorStandRemove(event: EntityDamageByEntityEvent) {
+        if (event.entity is ArmorStand) {
+            val location = event.entity.location
+            val find = Cube.allCyborgLocations().find {
+                it.y == location.y &&
+                        it.x == location.x &&
+                        location.z == it.z
+            }
+            if (find != null) {
+                event.isCancelled = true
+            }
+        }
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlace(event: BlockPlaceEvent) {
@@ -39,7 +55,7 @@ class CubeListeners : Listener {
 
                         cubeProps.upgrades.forEach {
                             val level = mainHand.tag("{primecubes_${it}}")?.toInt() ?: 0
-                            upgrades[it] = level
+                            upgrades[it.upgradeType] = level
                         }
                         val cube = Cube(typeId = type, owner = player.name, location = location, upgrades = upgrades)
                         Main.singleton.server.scheduler.runTask(Main.singleton) {
@@ -76,7 +92,6 @@ class CubeListeners : Listener {
 
     @EventHandler
     fun onArmorStandManipulate(event: PlayerInteractAtEntityEvent) {
-        println(event.clickedPosition.toBlockVector().toLocation(event.player.world))
         val location = event.rightClicked.location
         val find = Cube.allCyborgLocations().find {
             it.y == location.y &&
@@ -163,16 +178,12 @@ class CubeListeners : Listener {
                         .replace("&", "§"))
             }
             event.isCancelled = true
-        }
-
-        if (block !is ArmorStand) return
-        val find = Cube.allCyborgLocations().find {
-            it.y == location.y &&
-                    it.x == location.x &&
-                    location.z == it.z
-        }
-        if (find != null) {
-            event.isCancelled = true
+        } else {
+            val cubeBorders = Cube.bordersByLocation(location)
+            if (cubeBorders != null) {
+                event.isCancelled = true
+                return
+            }
         }
     }
 }

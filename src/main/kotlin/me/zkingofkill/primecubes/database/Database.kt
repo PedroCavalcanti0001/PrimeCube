@@ -3,73 +3,29 @@ package me.zkingofkill.primecubes.database
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import me.zkingofkill.primecubes.Main.Companion.singleton
+import me.zkingofkill.primecubes.Main
 import me.zkingofkill.primecubes.cube.Cube
 import me.zkingofkill.primecubes.cube.CubeDrop
 import me.zkingofkill.primecubes.cube.UpgradeType
 import me.zkingofkill.primecubes.util.locDeserializer
 import me.zkingofkill.primecubes.util.locSerializer
 import java.sql.Connection
-import java.sql.DriverManager
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import java.sql.SQLException
+import java.util.logging.Level
 
-class Mysql {
-    private var table: String = singleton.config.getString("mysql.table")
-    private var con: Connection? = openCon()
+abstract class Database(var plugin: Main) {
+    var connection: Connection? = null
 
-    private fun openCon(): Connection? {
-        if (con != null && !con!!.isClosed) return con
-        try {
-            val password = singleton.config.getString("mysql.password")
-            val user = singleton.config.getString("mysql.user")
-            val host = singleton.config.getString("mysql.host")
-            val port = singleton.config.getInt("mysql.port")
-            val database = singleton.config.getString("mysql.database")
-            val type = "jdbc:mysql://"
-            val url = "$type$host:$port/$database"
-            return DriverManager.getConnection(url, user, password)
+    var table = "cubes"
+    var tokens = 0
+    abstract val sQLConnection: Connection?
 
-        } catch (e: Exception) {
-            e.printStackTrace()
-            println("  ")
-            println("  ")
-            println("[PrimeCubes] O plugin não se conectou ao mysql por favor verifique sua configuração.")
-            println("  ")
-            println("  ")
-            singleton.pluginLoader.disablePlugin(singleton)
-        }
-        return null
-    }
-
-    fun init() {
-        con = openCon()
-        val createTable: PreparedStatement
-        try {
-            createTable =
-                    con!!.prepareStatement(
-                            "CREATE TABLE IF NOT EXISTS $table" +
-                                    "(`typeId` INTEGER, " +
-                                    "`uniqueId` INTEGER, " +
-                                    "`owner` VARCHAR(25), " +
-                                    "`storage` LONGTEXT NOT NULL," +
-                                    "`upgrades` LONGTEXT NOT NULL," +
-                                    "`location` VARCHAR(400), " +
-                                    "PRIMARY KEY (`uniqueId`));"
-                    )
-
-            createTable.execute()
-            createTable.close()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            con!!.close()
-        }
-
-    }
+    abstract fun load()
 
     fun loadCubes(): ArrayList<Cube> {
-        con = openCon()
+        val con = sQLConnection
         val results = arrayListOf<Cube>()
         val ps =
                 con!!.prepareStatement("SELECT * FROM $table")
@@ -97,19 +53,20 @@ class Mysql {
         return results
     }
 
+
     fun upsert(cube: Cube) {
+        val con = sQLConnection
         try {
-            con = openCon()
+
             val insert =
                     con!!.prepareStatement(
-                            "INSERT INTO $table(" +
+                            "INSERT OR REPLACE INTO $table(" +
                                     "typeId," +
                                     "uniqueId," +
                                     " owner," +
                                     " storage," +
                                     " location," +
-                                    " upgrades) VALUES (?,?,?,?,?,?) " +
-                                    "ON DUPLICATE KEY UPDATE typeId = ?,uniqueId= ?, owner= ?, storage= ?, location= ?, upgrades= ?;"
+                                    " upgrades) VALUES (?,?,?,?,?,?);"
                     )
             insert.setInt(1, cube.typeId)
             insert.setInt(2, cube.uniqueId)
@@ -117,25 +74,19 @@ class Mysql {
             insert.setString(4, Gson().toJson(cube.storage))
             insert.setString(5, cube.location.locSerializer())
             insert.setString(6, Gson().toJson(cube.upgrades))
-
-            insert.setInt(7, cube.typeId)
-            insert.setInt(8, cube.uniqueId)
-            insert.setString(9, cube.owner)
-            insert.setString(10, Gson().toJson(cube.storage))
-            insert.setString(11, cube.location.locSerializer())
-            insert.setString(12, Gson().toJson(cube.upgrades))
-
             insert.execute()
-            con!!.close()
-
+            insert.close()
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            con?.close()
         }
     }
 
     fun delete(cube: Cube) {
+        val con = sQLConnection
         try {
-            con = openCon()
+
             val delete = con!!.prepareStatement("DELETE FROM $table WHERE uniqueId = ?;")
             delete.setInt(1, cube.uniqueId)
             delete.execute()
@@ -146,4 +97,14 @@ class Mysql {
             con!!.close()
         }
     }
+
+    fun close(ps: PreparedStatement?, rs: ResultSet?) {
+        try {
+            ps?.close()
+            rs?.close()
+        } catch (ex: SQLException) {
+            Error.close(plugin, ex);
+        }
+    }
+
 }

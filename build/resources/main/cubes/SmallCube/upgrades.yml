@@ -39,9 +39,9 @@
       totalAmountPerDrop: 200
       #Value to upgrade
       price: 500
-      "2":
-        totalAmountPerDrop: 264
-        price: 1000
+    '2':
+      totalAmountPerDrop: 300
+      price: 1000
 "CYBORGSPEED":
   name: "&aCyborg Upgrade"
   item: "1"

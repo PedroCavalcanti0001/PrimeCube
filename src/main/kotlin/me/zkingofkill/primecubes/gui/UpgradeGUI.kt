@@ -9,21 +9,26 @@ import me.zkingofkill.primecubes.Main.Companion.singleton
 import me.zkingofkill.primecubes.cube.Cube
 import me.zkingofkill.primecubes.cube.UpgradeType
 import me.zkingofkill.primecubes.cube.upgrade.cyborgfortune.impl.CyborgFortuneLevel
-import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.impl.CyborgSpeedLevel
 import me.zkingofkill.primecubes.cube.upgrade.cyborglayers.impl.LayersLevel
+import me.zkingofkill.primecubes.cube.upgrade.cyborgspeed.impl.CyborgSpeedLevel
 import me.zkingofkill.primecubes.cube.upgrade.loot.impl.LootLevel
 import me.zkingofkill.primecubes.cube.upgrade.speed.impl.SpeedLevel
 import me.zkingofkill.primecubes.cube.upgrade.storage.impl.StorageLevel
+import me.zkingofkill.primecubes.exception.UpgradeNotFoundException
 import me.zkingofkill.primecubes.util.format
 import org.bukkit.Material
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import utils.CustomHead
 import utils.ItemStackBuilder
+import java.io.File
 
 class UpgradeGUI(var player: Player, var cube: Cube) : InventoryProvider {
 
-    private val cf = singleton.config
-    private val title = cf.getString("guis.upgrade.title")
+    private val file = File(singleton.dataFolder,
+            "cubes/${cube.props.folderName}/guis/upgrades.yml")
+    private val cf = YamlConfiguration.loadConfiguration(file)
+    private val title = cf.getString("upgrade.title")
             .replace("&", "§")
             .replace("{size}", cube.cubeSize.toString())
     private val rows = 4
@@ -36,22 +41,25 @@ class UpgradeGUI(var player: Player, var cube: Cube) : InventoryProvider {
 
     override fun init(player: Player, contents: InventoryContents) {
 
-        cf.getConfigurationSection("guis.upgrade.items").getKeys(false).forEach { sec ->
-
+        cf.getConfigurationSection("upgrade.items").getKeys(false).forEach { sec ->
             val upgrade = if (sec != "previousGUI") UpgradeType.valueOf(sec.toUpperCase()) else null
-            val row = cf.getInt("guis.upgrade.items.$sec.position.row")
-            val collunm = cf.getInt("guis.upgrade.items.$sec.position.collunm")
-            val itemName = cf.getString("guis.upgrade.items.$sec.name")
+            val row = cf.getInt("upgrade.items.$sec.position.row")
+            val collunm = cf.getInt("upgrade.items.$sec.position.collunm")
+            val itemName = cf.getString("upgrade.items.$sec.name")
                     .replace("&", "§")
-            var itemLore = if (upgrade == null || cube.props.upgrades.contains(upgrade)) {
-                cf.getStringList("guis.upgrade.items.$sec.lore")
+            val cyborgUpgrade = upgrade == UpgradeType.CYBORGLAYERS || upgrade == UpgradeType.CYBORGFORTUNE ||
+                    upgrade == UpgradeType.CYBORGSPEED
+
+            var itemLore = if ((upgrade == null || (cube.props.containsUpgrade(upgrade)) &&
+                            ((cyborgUpgrade && cube.props.activatedCyborg) || !cyborgUpgrade))) {
+                cf.getStringList("upgrade.items.$sec.lore")
                         .map { it.replace("&", "§") }
-            } else cf.getStringList("guis.upgrade.items.$sec.loreDoesNotApply")
+            } else cf.getStringList("upgrade.items.$sec.loreDoesNotApply")
                     .map { it.replace("&", "§") }
 
-            if (upgrade != null) {
+            if (upgrade != null && cube.iUpgrade(upgrade) != null) {
+                var iupgrade = cube.iUpgrade(upgrade) ?: throw UpgradeNotFoundException(sec.toUpperCase())
                 val level = cube.level(upgrade)
-                var iupgrade = cube.iUpgrade(upgrade)
                 var nextUpgrade = iupgrade.nextLevel(level)
                 var nextLevel = nextUpgrade?.level?.toString() ?: "max"
                 var price = nextUpgrade?.price?.format() ?: "0"
@@ -157,7 +165,7 @@ class UpgradeGUI(var player: Player, var cube: Cube) : InventoryProvider {
                     }
                 }
             }
-            val item = cf.getString("guis.upgrade.items.$sec.item").toUpperCase()
+            val item = cf.getString("upgrade.items.$sec.item").toUpperCase()
             val itemArgs = item.split(":")
             var itemId: String
             var itemDur = 0
@@ -181,9 +189,13 @@ class UpgradeGUI(var player: Player, var cube: Cube) : InventoryProvider {
                 if (upgrade == null) {
                     MainGUI(player, cube).open()
                 } else {
-                    if (!cube.props.upgrades.contains(upgrade)) return@of
+                    if (!cube.props.containsUpgrade(upgrade)) return@of
+                    if (!cube.props.activatedCyborg &&
+                            (upgrade == UpgradeType.CYBORGLAYERS ||
+                                    upgrade == UpgradeType.CYBORGFORTUNE ||
+                                    upgrade == UpgradeType.CYBORGSPEED)) return@of
                     val level = cube.level(upgrade)
-                    var iupgrade = cube.iUpgrade(upgrade)
+                    var iupgrade = cube.iUpgrade(upgrade) ?: throw UpgradeNotFoundException(sec.toUpperCase())
                     var nextUpgrade = iupgrade.nextLevel(level)
                     if (nextUpgrade is LayersLevel) {
                         val maxLayers = cube.cubeSize.xz * cube.cubeSize.xz

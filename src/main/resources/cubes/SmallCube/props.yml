@@ -1,0 +1,18 @@
+id: 1
+name: '&aA small cube'
+size: 3-3
+item: 'afd2400002ad9fbbbd0066941eb5b1a384ab9b0e48a178ee96e4d129a5208654'
+activatedCyborg: false
+defaultSections: 1
+defaultStorage: 124
+defaultSpeed: 30
+timeToRemove: 30
+nextCube: -1
+lore:
+  - ' '
+  - '&eSize: &e{size}'
+  - '&e'
+  - '&6&lUpgrades:'
+  - '&e&l{UpgradeName} &8(&7{upgradeLevel}&8)'
+  - ''
+  - '&7&oPut it on the ground to start generating ores!'

@@ -1,0 +1,53 @@
+cube:
+  title: "PrimeCube {size}"
+  items:
+    upgrades:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lUpgrades"
+      lore:
+        - ""
+        - "&aClick to open upgrades!"
+      position:
+        row: 5
+        collunm: 3
+    sellAll:
+      item: "Diamond"
+      name: "&2&lSELL ALL"
+      lore:
+        - ""
+        - "&aPrice: &f{price}"
+      position:
+        row: 5
+        collunm: 5
+    remove:
+      item: "barrier"
+      name: "&4&lRemove"
+      lore:
+        - ""
+        - "&cremove cube"
+      position:
+        row: 5
+        collunm: 8
+    nextPage:
+      item: "arrow"
+      name: "&aNext Page"
+      lore:
+        - ""
+        - "&2--->"
+      position:
+        row: 2
+        collunm: 7
+    previousPage:
+      item: "arrow"
+      name: "&cPrevious Page"
+      lore:
+        - ""
+        - "&2<---"
+      position:
+        row: 2
+        collunm: 1
+    glassPane:
+      item: "stained_glass_pane:15"
+      name: ""
+      lore: []
+

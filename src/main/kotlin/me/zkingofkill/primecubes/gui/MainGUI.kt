@@ -11,15 +11,18 @@ import me.zkingofkill.primecubes.cube.Cube
 import me.zkingofkill.primecubes.util.format
 import me.zkingofkill.primecubes.util.freeSlots
 import org.bukkit.Material
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import utils.CustomHead
 import utils.ItemStackBuilder
+import java.io.File
 import kotlin.math.roundToLong
 
 class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
-
-    private val cf = singleton.config
-    private val title = cf.getString("guis.cube.title")
+    private val file = File(singleton.dataFolder,
+            "cubes/${cube.props.folderName}/guis/main.yml")
+    private val cf = YamlConfiguration.loadConfiguration(file)
+    private val title = cf.getString("cube.title")
             .replace("&", "§")
             .replace("{size}", cube.cubeSize.toString())
     private val rows = 6
@@ -98,16 +101,16 @@ class MainGUI(var player: Player, var cube: Cube) : InventoryProvider {
         pagination.addToIterator(iterator)
 
 
-        cf.getConfigurationSection("guis.cube.items").getKeys(false).forEach { sec ->
-            val row = cf.getInt("guis.cube.items.$sec.position.row")
-            val collunm = cf.getInt("guis.cube.items.$sec.position.collunm")
-            val itemName = cf.getString("guis.cube.items.$sec.name")
+        cf.getConfigurationSection("cube.items").getKeys(false).forEach { sec ->
+            val row = cf.getInt("cube.items.$sec.position.row")
+            val collunm = cf.getInt("cube.items.$sec.position.collunm")
+            val itemName = cf.getString("cube.items.$sec.name")
                     .replace("&", "§")
-            var itemLore = cf.getStringList("guis.cube.items.$sec.lore")
+            var itemLore = cf.getStringList("cube.items.$sec.lore")
                     .map { it.replace("&", "§") }
-                    .map { it.replace("{price}",allPrice.format()) }
+                    .map { it.replace("{price}", allPrice.format()) }
 
-            val item = cf.getString("guis.cube.items.$sec.item").toUpperCase()
+            val item = cf.getString("cube.items.$sec.item").toUpperCase()
             val itemArgs = item.split(":")
             var itemId: String
             var itemDur = 0

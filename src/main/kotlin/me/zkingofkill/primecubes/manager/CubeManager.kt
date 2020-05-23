@@ -28,7 +28,9 @@ class CubeManager(var cube: Cube) {
         }
         cube.cuboid.cyborgLoc.world.entities.forEach {
             if (it is ArmorStand) {
-                if (it.location == cube.cuboid.cyborgLoc) {
+                if (it.location.blockX == cube.cuboid.cyborgLoc.blockX &&
+                        it.location.blockY == cube.cuboid.cyborgLoc.blockY  &&
+                        it.location.blockZ == cube.cuboid.cyborgLoc.blockZ ) {
                     it.remove()
                 }
             }
@@ -116,11 +118,11 @@ class CubeManager(var cube: Cube) {
                         }
                     }
                 }
-            }, 20, 20)
+            }, 35, 35)
         }
 
         fun saveAll() {
-            val mysql = Main.singleton.mysql
+            val mysql = Main.singleton.db
             for (it in list) {
                 if (it.deleted) {
                     mysql.delete(it)

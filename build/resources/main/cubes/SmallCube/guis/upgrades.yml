@@ -1,0 +1,120 @@
+upgrade:
+  title: "PrimeCube {size}"
+  items:
+    speed:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lSpeed upgrade"
+      lore:
+        - ""
+        - "&bCube regen time: &c{current} &b-> &a{next}"
+        - " "
+        - "&bCurrent level: &f{currentLevel}"
+        - "&bNext level: &f{nextLevel}"
+        - "&bPrice to upgrade: &f{priceToUpgrade}"
+        - " "
+        - "&7Click to level up!"
+      loreDoesNotApply:
+        - ""
+        - "&cThis upgrade does not apply to this cube!"
+      position:
+        row: 1
+        collunm: 2
+    cyborgLayers:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lCyborg Layers upgrade"
+      lore:
+        - ""
+        - "&bCyborg Layers: &c{current} &b-> &a{next}"
+        - " "
+        - "&bCurrent level: &f{currentLevel}"
+        - "&bNext level: &f{nextLevel}"
+        - "&bPrice to upgrade: &f{priceToUpgrade}"
+        - " "
+        - "&7Click to level up!"
+      loreDoesNotApply:
+        - ""
+        - "&cThis upgrade does not apply to this cube!"
+      position:
+        row: 1
+        collunm: 3
+    storage:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lStorage upgrade"
+      lore:
+        - ""
+        - "&bCube Storage: &c{current} &b-> &a{next}"
+        - " "
+        - "&bCurrent level: &f{currentLevel}"
+        - "&bNext level: &f{nextLevel}"
+        - "&bPrice to upgrade: &f{priceToUpgrade}"
+        - " "
+        - "&7Click to level up!"
+      loreDoesNotApply:
+        - ""
+        - "&cThis upgrade does not apply to this cube!"
+      position:
+        row: 1
+        collunm: 4
+    loot:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lLoot upgrade"
+      lore:
+        - ""
+        - "&bCube Loot: &c{current} &b-> &a{next}"
+        - " "
+        - "&bCurrent level: &f{currentLevel}"
+        - "&bNext level: &f{nextLevel}"
+        - "&bPrice to upgrade: &f{priceToUpgrade}"
+        - " "
+        - "&7Click to level up!"
+      loreDoesNotApply:
+        - ""
+        - "&cThis upgrade does not apply to this cube!"
+      position:
+        row: 1
+        collunm: 5
+    cyborgSpeed:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lCyborg Speed"
+      lore:
+        - ""
+        - "&bCyborg Speed: &c{current} &b-> &a{next}"
+        - " "
+        - "&bCurrent level: &f{currentLevel}"
+        - "&bNext level: &f{nextLevel}"
+        - "&bPrice to upgrade: &f{priceToUpgrade}"
+        - " "
+        - "&7Click to level up!"
+      loreDoesNotApply:
+        - ""
+        - "&cThis upgrade does not apply to this cube!"
+      position:
+        row: 1
+        collunm: 6
+    cyborgFortune:
+      item: "85d336e7cc77680d877a54405a3f2be2cb3048deb26e22a626e9b4c0b081960a"
+      name: "&2&lCyborg Fortune"
+      lore:
+        - ""
+        - "&bCyborg Fortune maximum multiplier: &c{current} &b-> &a{next}"
+        - " "
+        - "&bCurrent level: &f{currentLevel}"
+        - "&bNext level: &f{nextLevel}"
+        - "&bPrice to upgrade: &f{priceToUpgrade}"
+        - " "
+        - "&7Click to level up!"
+      loreDoesNotApply:
+        - ""
+        - "&cThis upgrade does not apply to this cube!"
+      position:
+        row: 2
+        collunm: 4
+    previousGUI:
+      item: "arrow"
+      name: "&cMain GUI"
+      lore:
+        - ""
+        - "&2<---"
+      position:
+        row: 3
+        collunm: 8
